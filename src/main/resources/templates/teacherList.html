@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Список учителей</title>
+</head>
+<body>
+<h1>Список учителей</h1>
+<form action="/teachers/add" method="post">
+    <input type="text" name="name" placeholder="Имя" required>
+    <input type="text" name="lastName" placeholder="Фамилия" required>
+    <input type="text" name="firstName" placeholder="Отчество" required>
+    <input type="text" name="middleName" placeholder="Дополнительное имя" required>
+    <button type="submit">Добавить учителя</button>
+</form>
+
+<h2>Все студенты:</h2>
+<ul>
+    <th:block th:each="teacher : ${teachers}">
+        <li>
+            <span th:text="${teacher.name} + ' ' + ${teacher.lastName} + ' ' + ${teacher.firstName} + ' ' + ${teacher.middleName}"></span>
+            <form action="/teachers/update" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${teacher.id}"/>
+                <input type="text" name="name" placeholder="Имя" required/>
+                <input type="text" name="lastName" placeholder="Фамилия" required/>
+                <input type="text" name="firstName" placeholder="Отчество" required/>
+                <input type="text" name="middleName" placeholder="Дополнительное имя" required/>
+                <button type="submit">Обновить</button>
+            </form>
+            <form action="/teachers/delete" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${teacher.id}"/>
+                <button type="submit">Удалить</button>
+            </form>
+        </li>
+    </th:block>
+</ul>
+</body>
+</html>
