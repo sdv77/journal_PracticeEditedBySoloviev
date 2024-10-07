@@ -33,5 +33,22 @@
     </th:block>
 </ul>
 
+<h2>Фильтрация курсов:</h2>
+<form action="/courses/filter" method="get">
+    <input type="text" name="courseName" placeholder="Название курса">
+    <input type="checkbox" name="deleted"> Показать удаленные
+    <button type="submit">Фильтровать</button>
+</form>
+
+<h2>Множественное удаление:</h2>
+<form action="/courses/deleteMultiple" method="post">
+    <th:block th:each="course : ${courses}">
+        <input type="checkbox" name="ids" th:value="${course.id}">
+        <span th:text="${course.courseName}"></span><br>
+    </th:block>
+    <button type="submit">Удалить выбранные</button>
+</form>
+
+
 </body>
 </html>

@@ -39,5 +39,27 @@ public class InMemoryCourseServiceImpl implements CourseService {
     public void deleteCourse(int id) {
         courseRepository.deleteCourse(id);
     }
+
+
+
+    @Override
+    public void logicalDeleteCourse(int id) {
+        courseRepository.logicalDeleteCourse(id); // Логическое удаление
+    }
+
+    @Override
+    public List<CourseModel> findByCourseName(String courseName) {
+        return courseRepository.findByCourseName(courseName); // Поиск
+    }
+
+    @Override
+    public List<CourseModel> filterCourses(String courseName, Boolean deleted, Integer id) {
+        return courseRepository.filterCourses(courseName, deleted, id); // Фильтрация
+    }
+
+    @Override
+    public void logicalDeleteCourses(List<Integer> ids) {
+        courseRepository.logicalDeleteCourses(ids); // Множественное логическое удаление
+    }
 }
 

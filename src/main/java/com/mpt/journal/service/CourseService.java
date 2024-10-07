@@ -11,4 +11,8 @@ public interface CourseService {
     public CourseModel addCourse(CourseModel course);
     public CourseModel updateCourse(CourseModel course);
     public void deleteCourse(int id);
+    void logicalDeleteCourse(int id);
+    List<CourseModel> findByCourseName(String courseName);
+    List<CourseModel> filterCourses(String courseName, Boolean deleted, Integer id);
+    void logicalDeleteCourses(List<Integer> ids);
 }
