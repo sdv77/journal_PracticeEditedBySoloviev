@@ -1,18 +1,14 @@
 package com.mpt.journal.service;
 
 
-import com.mpt.journal.model.CourseModel;
+import com.mpt.journal.model.Courses;
 
 import java.util.List;
 
 public interface CourseService {
-    public List<CourseModel> findAllCourses();
-    public CourseModel findCourseById(int id);
-    public CourseModel addCourse(CourseModel course);
-    public CourseModel updateCourse(CourseModel course);
-    public void deleteCourse(int id);
-    void logicalDeleteCourse(int id);
-    List<CourseModel> findByCourseName(String courseName);
-    List<CourseModel> filterCourses(String courseName, Boolean deleted, Integer id);
-    void logicalDeleteCourses(List<Integer> ids);
+    List<Courses> findAllCourses();
+    Courses createCourses(Courses courses);
+    Courses updateCourses(Courses courses);
+    Courses findCoursesbyId(Long id);
+    void deleteCourses(Long id);
 }

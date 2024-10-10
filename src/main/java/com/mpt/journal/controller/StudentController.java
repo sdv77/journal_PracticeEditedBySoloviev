@@ -1,14 +1,18 @@
 package com.mpt.journal.controller;
 
+import com.mpt.journal.model.Courses;
 import com.mpt.journal.model.StudentModel;
+import com.mpt.journal.service.CourseService;
 import com.mpt.journal.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -16,39 +20,73 @@ import java.util.Optional;
 @Controller
 public class StudentController {
 
+    @Qualifier("studentServiceImpl")
     @Autowired
     private StudentService studentService;
 
+    @Autowired
+    private CourseService coursesService;
+
     @GetMapping("/students")
     public String getAllStudents(Model model) {
-        model.addAttribute("students", studentService.findAllStudent()); // просто выгрузка студентов на экран
-        return "studentList";
+        List<StudentModel> students = studentService.findAllStudent();
+        List<Courses> courses = coursesService.findAllCourses(); // Получите все оценки
+
+        model.addAttribute("students", students);
+        model.addAttribute("courses", courses); // Передайте оценки в модель
+        model.addAttribute("student", new StudentModel()); // Передайте новый объект студента
+
+        return "students"; // Вернуть имя шаблона
     }
 
-    @PostMapping("/students/add")
-    public String addStudent(@RequestParam String name,
-                             @RequestParam String lastName,
-                             @RequestParam String firstName,
-                             @RequestParam String middleName) {
-        StudentModel newStudent = new StudentModel(0, name, lastName, firstName, middleName); // тут мы получаем данные с главных полей, id задается автоматически из нашего репозитория
-        studentService.addStudent(newStudent); // добавление студента в оперативную память(после перезапуска проекта, все данные стираются)
-        return "redirect:/students"; // Здесь мы с вами используем redirect на наш GetMapping, чтобы не создавать много однотипных страниц, считай просто презагружаем страницу с новыми данными
+    @GetMapping("/student/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("student", new StudentModel()); // Передаем новый объект студента
+        return "createStudent"; // возвращаем имя шаблона
+    }
+
+
+    @PostMapping("/students")
+    public String createStudent(@Valid @ModelAttribute StudentModel student, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            List<StudentModel> students = studentService.findAllStudent();
+            List<Courses> courses = coursesService.findAllCourses(); // Получите все оценки
+
+            model.addAttribute("students", students);
+            model.addAttribute("courses", courses); // Передайте оценки в модель
+            model.addAttribute("student", new StudentModel()); // Передайте новый объект студента
+
+            return "students";
+        }
+        studentService.createStudent(student);
+        return "redirect:/students";
+    }
+
+
+
+    @GetMapping("/students/edit/{id}")
+    public String editStudent(@PathVariable Long id, Model model) {
+        StudentModel student = studentService.findStudentById(id);
+        model.addAttribute("student", student);
+        return "editStudent";
     }
 
     @PostMapping("/students/update")
-    public String updateStudent(@RequestParam int id,
-                                @RequestParam String name,
-                                @RequestParam String lastName,
-                                @RequestParam String firstName,
-                                @RequestParam String middleName) {
-        StudentModel updatedStudent = new StudentModel(id, name, lastName, firstName, middleName); // Получаем новые данные из полей для обновления
-        studentService.updateStudent(updatedStudent); // Ссылаемся на наш сервис для обновления по id
-        return "redirect:/students"; // Здесь мы с вами используем redirect на наш GetMapping, чтобы не создавать много однотипных страниц, считай просто презагружаем страницу с новыми данными
+    public String updateStudent(@Valid @ModelAttribute StudentModel student, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            System.out.println("Validation errors: " + bindingResult.getAllErrors());
+            List<StudentModel> students = studentService.findAllStudent();
+            model.addAttribute("students", students);
+            model.addAttribute("student", student);
+            return "students";
+        }
+        studentService.updateStudent(student);
+        return "redirect:/students";
     }
 
-    @PostMapping("/students/delete")
-    public String deleteStudent(@RequestParam int id) {
-        studentService.deleteStudent(id); // Ссылаемся на наш сервис для удаления по id
-        return "redirect:/students"; // Здесь мы с вами используем redirect на наш GetMapping, чтобы не создавать много однотипных страниц, считай просто презагружаем страницу с новыми данными
+    @GetMapping("/students/delete/{id}")
+    public String deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
+        return "redirect:/students";
     }
 }

@@ -1,57 +1,59 @@
 package com.mpt.journal.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+@Entity
+@Table(name = "students")
 public class StudentModel {
-    private int Id;
-    private String Name;
-    private String LastName;
-    private String FirstName;
-    private String MiddleName;
 
-    public StudentModel(int id, String name, String lastName, String firstName, String middleName) {
-        Id = id;
-        Name = name;
-        LastName = lastName;
-        FirstName = firstName;
-        MiddleName = middleName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @Email(message = "Некорректный email")
+    @NotBlank(message = "Email не должен быть пустым")
+    private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "courses_id") // Укажите имя столбца в таблице студентов
+    private Courses courses;
+
+    // Геттеры и сеттеры
+
+    public Long getId() {
+        return id;
     }
 
-    public int getId() {
-        return Id;
-    }
-
-    public void setId(int id) {
-        Id = id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
-    public String getLastName() {
-        return LastName;
+    public @Email(message = "Некорректный email") @NotBlank(message = "Email не должен быть пустым") String getEmail() {
+        return email;
     }
 
-    public void setLastName(String lastName) {
-        LastName = lastName;
+    public void setEmail(@Email(message = "Некорректный email") @NotBlank(message = "Email не должен быть пустым") String email) {
+        this.email = email;
     }
 
-    public String getFirstName() {
-        return FirstName;
+    public Courses getCourses() {
+        return courses;
     }
 
-    public void setFirstName(String firstName) {
-        FirstName = firstName;
-    }
 
-    public String getMiddleName() {
-        return MiddleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        MiddleName = middleName;
+    public void setCourses(Courses courses) {
+        this.courses = courses;
     }
 }
